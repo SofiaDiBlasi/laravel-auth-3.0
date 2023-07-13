@@ -46,6 +46,15 @@
                     @endforeach
                 </select>
 
+                <div class="d-flex mt-3">
+                    @foreach ($technologies as $i => $technology)
+                        <div class="form-check m-3">
+                            <input type="checkbox" value="{{old("$technology->id")}}" name="technologies[]" id="technologies{{$i}}" class="form-check-input" >
+                            <label for="technologies{{$i}}" class="form-check-label">{{$technology->name}}</label>
+                        </div>
+                    @endforeach
+                </div>
+
                 @error("link")
                     <div class="invalid-feedback">{{$message}}</div>
                 @enderror

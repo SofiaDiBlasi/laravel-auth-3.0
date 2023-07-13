@@ -32,6 +32,13 @@
                     <?php if($project->type != null ){ ?>
                         <p>{{ $project->type->name}}</p>
                     <?php } ?>
+                    <?php if($project->technologies != null ){ ?>
+                        <ul>
+                            @foreach ($project->technologies as $technology)
+                            <li>{{$technology->name}}</li>
+                            @endforeach
+                        </ul>
+                    <?php } ?>
                     <img width="400px" height="400px" src="{{$project->link}}" alt="{{$project->name}}">
                 </div>
             </div>

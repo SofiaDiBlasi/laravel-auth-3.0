@@ -48,6 +48,15 @@
                     @endforeach
                 </select>
 
+                <div class="d-flex mt-3">
+                    @foreach ($technologies as $i => $technology)
+                        <div class="form-check m-3">
+                            <input type="checkbox" value="{{old("$technology->id") ?? $technology->id}}" name="technologies[]" id="technologies{{$i}}" class="form-check-input" >
+                            <label for="technologies{{$i}}" class="form-check-label">{{$technology->name}}</label>
+                        </div>
+                    @endforeach
+                </div>
+
                 <input class="form-control mt-4 btn btn-secondary" type="submit" value="Invia">
              </form>
         </div>

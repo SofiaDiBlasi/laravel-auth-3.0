@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Http\Request;
 
@@ -31,7 +32,8 @@ class ProjectController extends Controller
     public function create()
     {
         $data = Type::all();
-        return view('admin.projects.create' , compact('data'));
+        $technologies = Technology::all();
+        return view('admin.projects.create' , compact('data', 'technologies'));
     }
 
     /**
@@ -51,6 +53,8 @@ class ProjectController extends Controller
         $newProject->link = $data['link'];
         $newProject->type_id = $data['type'];
         $newProject->save();
+
+        $newProject->technologies()->attach($data["technologies"]);
 
         return  redirect()->route('admin.projects.show', $newProject->id);
     }
@@ -76,7 +80,8 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $data = Type::all();
-        return view('admin.projects.edit' , compact('project', 'data'));
+        $technologies = Technology::all();
+        return view('admin.projects.edit' , compact('project', 'data', 'technologies'));
     }
 
     /**
@@ -96,6 +101,8 @@ class ProjectController extends Controller
         $project->link = $data['link'];
         $project->type_id = $data['type'];
         $project->update();
+
+        $project->technologies()->sync($data["technologies"]);
 
         return  redirect()->route('admin.projects.show', $project->id);
     }
@@ -118,6 +125,7 @@ class ProjectController extends Controller
             "description" => "required|min:5|max:65535",
             "link" => "required|max:65535",
             "type" => "required",
+            "technologies" =>"required"
         ], [
             "name.required" => "Il nome è obbligatorio",
             "name.min" => "Il nome deve essere almeno di :min caratteri",
@@ -131,6 +139,8 @@ class ProjectController extends Controller
             "link.max"=> "Link immagine non valido",
 
             "type.required" => "La tipologia è obbligatoria",
+
+            "technologies.required" => "Almeno una tecnologia è obbligatoria!"
         ])->validate();
 
         return $validator;
