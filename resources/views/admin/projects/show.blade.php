@@ -39,7 +39,7 @@
                             @endforeach
                         </ul>
                     <?php } ?>
-                    <img width="400px" height="400px" src="{{$project->link}}" alt="{{$project->name}}">
+                    <img width="400px" height="400px" src="{{asset('storage/' . $project->link)}}">
                 </div>
             </div>
         </div>

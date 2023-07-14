@@ -10,6 +10,9 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 
 class ProjectController extends Controller
 {
@@ -47,14 +50,20 @@ class ProjectController extends Controller
     {
         $data =  $this->validateProject( $request->all() );
 
+        if($request->hasFile("image")) {
+            $img_path = Storage::put("uploads", $data["image"]);
+            $data['image'] = $img_path;
+        }
+
         $newProject = new Project();
         $newProject->name = $data['name'];
         $newProject->description = $data['description'];
-        $newProject->link = $data['link'];
         $newProject->type_id = $data['type'];
+        $newProject->link =  $data['image'];
         $newProject->save();
 
         $newProject->technologies()->attach($data["technologies"]);
+
 
         return  redirect()->route('admin.projects.show', $newProject->id);
     }
@@ -96,9 +105,14 @@ class ProjectController extends Controller
     {
         $data =  $this->validateProject( $request->all() );
 
+        if($request->hasFile("image")) {
+            $img_path = Storage::put("uploads", $data["image"]);
+            $data['image'] = $img_path;
+        }
+
         $project->name = $data['name'];
         $project->description = $data['description'];
-        $project->link = $data['link'];
+        $project->link = $data['image'];
         $project->type_id = $data['type'];
         $project->update();
 
@@ -123,9 +137,13 @@ class ProjectController extends Controller
         $validator = Validator::make($data, [
             "name" => "required|min:5|max:50",
             "description" => "required|min:5|max:65535",
-            "link" => "required|max:65535",
             "type" => "required",
-            "technologies" =>"required"
+            "technologies" =>"required",
+            'image' => [
+                'required',
+                File::image()
+                    ->dimensions(Rule::dimensions()->maxWidth(2000)->maxHeight(2000)),
+            ],
         ], [
             "name.required" => "Il nome è obbligatorio",
             "name.min" => "Il nome deve essere almeno di :min caratteri",
@@ -135,12 +153,11 @@ class ProjectController extends Controller
             "description.min" => "La descrizione deve essere almeno di :min caratteri",
             "description.max"=> "La descrizione è troppo lunga",
 
-            "link.required" => "L'immagine è obbligatoria",
-            "link.max"=> "Link immagine non valido",
-
             "type.required" => "La tipologia è obbligatoria",
 
-            "technologies.required" => "Almeno una tecnologia è obbligatoria!"
+            "technologies.required" => "Almeno una tecnologia è obbligatoria!",
+
+            "image.required" => "Almeno un immagine è obbligatoria"
         ])->validate();
 
         return $validator;

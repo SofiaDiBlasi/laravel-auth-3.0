@@ -16,7 +16,7 @@
 
     <div class="row g-4 py-4">
         <div class="col">
-            <form action="{{ route("admin.projects.store") }}" method="post" class="needs-validation">
+            <form action="{{ route("admin.projects.store") }}" method="post" class="needs-validation" enctype="multipart/form-data">
                 @csrf
 
                 <label>Name</label>
@@ -31,8 +31,8 @@
                     <div class="invalid-feedback">{{$message}}</div>
                 @enderror
 
-                <label>Link</label>
-                <input class="form-control @error('link') is-invalid @enderror" type="text" name="link" value="{{old("link")}}">
+                <label for="image">Immagine</label>
+                <input type="file" name="image" id="image" class="form-control mb-4 @error('image') is-invalid @enderror">
                 @error("link")
                     <div class="invalid-feedback">{{$message}}</div>
                 @enderror
